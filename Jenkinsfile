@@ -12,8 +12,23 @@ stages {
 
     stage('Deploy Lambda') {
         steps {
-            bat 'aws lambda update-function-code --function-name policy-service --zip-file fileb://lambda.zip'
+            bat '''
+            aws lambda update-function-code ^
+            --region ap-south-1 ^
+            --function-name policy-service ^
+            --zip-file fileb://lambda.zip
+            '''
         }
+    }
+}
+
+post {
+    success {
+        echo 'Lambda deployment successful'
+    }
+
+    failure {
+        echo 'Lambda deployment failed'
     }
 }
 
