@@ -2,44 +2,38 @@ pipeline {
 agent any
 
 
-environment {
-    AWS_DEFAULT_REGION = 'ap-south-1'
+parameters {
+    string(
+        name: 'LAMBDA_NAME',
+        defaultValue: 'policy-service',
+        description: 'AWS Lambda Name'
+    )
 }
 
 stages {
 
-    stage('Package Lambda') {
+    stage('Package') {
         steps {
             bat 'powershell Compress-Archive -Path lambda_function.py -DestinationPath lambda.zip -Force'
         }
     }
 
-    stage('Deploy Lambda') {
+    stage('Deploy') {
         steps {
             withCredentials([
                 [$class: 'AmazonWebServicesCredentialsBinding',
                  credentialsId: 'aws-creds']
             ]) {
-                bat '''
+
+                bat """
                 aws lambda update-function-code ^
                 --region ap-south-1 ^
-                --function-name policy-service ^
+                --function-name %LAMBDA_NAME% ^
                 --zip-file fileb://lambda.zip
-                '''
+                """
             }
         }
     }
 }
-
-post {
-    success {
-        echo 'Lambda deployment successful'
-    }
-
-    failure {
-        echo 'Lambda deployment failed'
-    }
-}
-
 
 }
