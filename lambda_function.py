@@ -26,3 +26,6 @@ def get_employee(emp_id: int):
 def add_employee(employee: dict):
     employees.append(employee)
     return {"message": "Employee added", "employee": employee}
+
+
+# Tanmay loving this
