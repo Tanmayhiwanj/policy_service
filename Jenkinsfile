@@ -1,7 +1,7 @@
 pipeline {
 agent any
 
-```
+
 stages {
 
     stage('Package Lambda') {
@@ -16,6 +16,6 @@ stages {
         }
     }
 }
-```
+
 
 }
