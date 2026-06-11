@@ -2,6 +2,10 @@ pipeline {
 agent any
 
 
+environment {
+    AWS_DEFAULT_REGION = 'ap-south-1'
+}
+
 stages {
 
     stage('Package Lambda') {
@@ -12,12 +16,17 @@ stages {
 
     stage('Deploy Lambda') {
         steps {
-            bat '''
-            aws lambda update-function-code ^
-            --region ap-south-1 ^
-            --function-name policy-service ^
-            --zip-file fileb://lambda.zip
-            '''
+            withCredentials([
+                [$class: 'AmazonWebServicesCredentialsBinding',
+                 credentialsId: 'aws-creds']
+            ]) {
+                bat '''
+                aws lambda update-function-code ^
+                --region ap-south-1 ^
+                --function-name policy-service ^
+                --zip-file fileb://lambda.zip
+                '''
+            }
         }
     }
 }
