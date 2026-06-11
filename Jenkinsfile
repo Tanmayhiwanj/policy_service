@@ -1,28 +1,21 @@
 pipeline {
-    agent any
+agent any
 
-    stages {
+```
+stages {
 
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/company/policy-service.git'
-            }
-        }
-
-        stage('Package') {
-            steps {
-                sh 'zip lambda.zip lambda_function.py'
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                sh '''
-                aws lambda update-function-code \
-                --function-name policy-service \
-                --zip-file fileb://lambda.zip
-                '''
-            }
+    stage('Package Lambda') {
+        steps {
+            bat 'powershell Compress-Archive -Path lambda_function.py -DestinationPath lambda.zip -Force'
         }
     }
+
+    stage('Deploy Lambda') {
+        steps {
+            bat 'aws lambda update-function-code --function-name policy-service --zip-file fileb://lambda.zip'
+        }
+    }
+}
+```
+
 }
