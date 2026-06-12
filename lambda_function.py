@@ -28,6 +28,4 @@ def add_employee(employee: dict):
     return {"message": "Employee added", "employee": employee}
 
 
-# Tanmay loving this
-# Tanmay ji
-print("hello")
+# Tanmay l
