@@ -4,15 +4,15 @@ from policy_service import get_policy
 def lambda_handler(event, context):
 
 
-policy_no = event.get("policy_no", "12345")
+    policy_no = event.get("policy_no", "12345")
 
-response = get_policy(policy_no)
+    response = get_policy(policy_no)
 
-return {
-    "statusCode": 200,
-    "environment": ENV,
-    "db_host": DB_HOST,
-    "api_url": API_URL,
-    "data": response
-}
+    return {
+        "statusCode": 200,
+        "environment": ENV,
+        "db_host": DB_HOST,
+        "api_url": API_URL,
+        "data": response
+    }
 
