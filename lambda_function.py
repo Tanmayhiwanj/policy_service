@@ -1,31 +1,18 @@
-from fastapi import FastAPI
+from config import ENV, DB_HOST, API_URL
+from policy_service import get_policy
 
-app = FastAPI()
-
-employees = [
-    {"id": 1, "name": "Tanmay", "department": "IT"},
-    {"id": 2, "name": "Rahul", "department": "HR"}
-]
-
-@app.get("/")
-def home():
-    return {"message": "Employee API Running"}
-
-@app.get("/employees")
-def get_employees():
-    return employees
-
-@app.get("/employees/{emp_id}")
-def get_employee(emp_id: int):
-    for emp in employees:
-        if emp["id"] == emp_id:
-            return emp
-    return {"error": "Employee not found"}
-
-@app.post("/employees")
-def add_employee(employee: dict):
-    employees.append(employee)
-    return {"message": "Employee added", "employee": employee}
+def lambda_handler(event, context):
 
 
-# Tanmay l
+policy_no = event.get("policy_no", "12345")
+
+response = get_policy(policy_no)
+
+return {
+    "statusCode": 200,
+    "environment": ENV,
+    "db_host": DB_HOST,
+    "api_url": API_URL,
+    "data": response
+}
+
