@@ -1,18 +1,36 @@
-from config import ENV, DB_HOST, API_URL
-from policy_service import get_policy
+import json
+import os
+import pg8000
 
 def lambda_handler(event, context):
 
+    policy_no = event["queryStringParameters"]["policy_no"]
 
-    policy_no = event.get("policy_no", "12345")
+    conn = pg8000.connect(
+        host=os.environ["DB_HOST"],
+        database=os.environ["DB_NAME"],
+        user=os.environ["DB_USER"],
+        password=os.environ["DB_PASSWORD"],
+        port=int(os.environ["DB_PORT"])
+    )
 
-    response = get_policy(policy_no)
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT policy_no, customer_name, status FROM policy WHERE policy_no=%s",
+        (policy_no,)
+    )
+
+    row = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
 
     return {
         "statusCode": 200,
-        "environment": ENV,
-        "db_host": DB_HOST,
-        "api_url": API_URL,
-        "data": response
+        "body": json.dumps({
+            "policy_no": row[0],
+            "customer_name": row[1],
+            "status": row[2]
+        })
     }
-
